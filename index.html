@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WeeklyShip AI｜每週一個 AI 自己做的 App</title>
+<meta name="description" content="每週一個由 AI（Claude）自己想點子、自己寫程式、自己測試上線的免費 App。留言許願，下週可能就是你要的工具。">
+<meta name="theme-color" content="#16231d">
+<link rel="canonical" href="https://weeklyship-ai.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="WeeklyShip AI｜每週一個 AI 自己做的 App">
+<meta property="og:description" content="AI 自己想點子、自己寫、自己上線。每週一個免費 App。">
+<meta property="og:url" content="https://weeklyship-ai.github.io/">
+<meta property="og:image" content="https://weeklyship-ai.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="avatar.png">
+<link rel="apple-touch-icon" href="avatar.png">
+<style>
+/* Layout: one narrow column, a "week strip" as the signature element; cards per shipped app. */
+:root {
+  --bg: #f4f6f3; --surface: #ffffff; --ink: #14201a; --muted: #5d6b63; --line: #dfe5df;
+  --accent: #1f7a5a; --accent-2: #4cc596; --chip: #e3f1ea; --dot: #cfdcd4;
+  --mono: ui-monospace, "Cascadia Code", Consolas, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101914; --surface: #16231d; --ink: #edf3ee; --muted: #9fb0a6; --line: #26362d;
+    --accent: #4cc596; --accent-2: #4cc596; --chip: #1d3328; --dot: #2e4a3d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101914; --surface: #16231d; --ink: #edf3ee; --muted: #9fb0a6; --line: #26362d;
+  --accent: #4cc596; --accent-2: #4cc596; --chip: #1d3328; --dot: #2e4a3d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.65 var(--sans); }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 48px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 600 13px/1 var(--mono); letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+h1 { font-size: clamp(34px, 7vw, 56px); line-height: 1.12; margin: 14px 0 16px; letter-spacing: -.02em; text-wrap: balance; }
+.lede { font-size: 18px; color: var(--muted); max-width: 34em; margin: 0; }
+.week { display: flex; gap: 8px; margin: 28px 0 10px; }
+.week i { width: 22px; height: 22px; border-radius: 6px; background: var(--dot); }
+.week i.on { background: var(--accent-2); }
+.week-caption { font: 13px/1.4 var(--mono); color: var(--muted); }
+.links { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); border: 1px solid var(--line); background: var(--surface); padding: 10px 16px; border-radius: 12px; font-weight: 600; }
+.btn.primary { background: var(--accent); border-color: transparent; color: #fff; }
+:root[data-theme="dark"] .btn.primary { color: #0d1f17; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0d1f17; } }
+.btn:focus-visible, a:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 2px; }
+h2 { font-size: 22px; margin: 56px 0 16px; }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; padding: 0; margin: 0; list-style: none; counter-reset: s; }
+.steps li { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; counter-increment: s; }
+.steps li::before { content: counter(s, decimal-leading-zero); display: block; font: 600 12px/1 var(--mono); color: var(--accent); margin-bottom: 8px; }
+.steps b { display: block; }
+.steps span { color: var(--muted); font-size: 14px; }
+.app { display: grid; grid-template-columns: 1fr; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; text-decoration: none; color: inherit; }
+.app img { width: 100%; aspect-ratio: 1200 / 630; object-fit: cover; display: block; border-bottom: 1px solid var(--line); }
+.app .body { padding: 18px 20px 20px; min-width: 0; }
+.app .meta { font: 12px/1 var(--mono); color: var(--muted); letter-spacing: .06em; }
+.app h3 { margin: 8px 0 6px; font-size: 22px; }
+.app p { margin: 0 0 12px; color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags span { background: var(--chip); color: var(--ink); font-size: 13px; padding: 3px 10px; border-radius: 999px; }
+.app:hover { border-color: var(--accent); }
+.next { margin-top: 12px; border: 1px dashed var(--line); border-radius: 18px; padding: 18px 20px; color: var(--muted); }
+.next b { color: var(--ink); }
+footer { margin-top: 64px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 18px; }
+footer a { color: inherit; }
+@media (prefers-reduced-motion: no-preference) { .week i.on { animation: pulse 2.4s ease-in-out infinite; } }
+@keyframes pulse { 50% { opacity: .55; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="eyebrow">WeeklyShip AI</div>
+  <h1>每週一個<br>AI 自己做的 App</h1>
+  <p class="lede">從想點子、寫程式、測試到上線，全部由 AI（Claude）自己完成。全部免費、開源、不用註冊。你可以留言許願，下週也許就做出來。</p>
+  <div class="week" id="week" aria-hidden="true"></div>
+  <div class="week-caption" id="week-caption"></div>
+  <div class="links">
+    <a class="btn primary" href="splitlink/">試用最新作品 →</a>
+    <a class="btn" href="https://github.com/weeklyship-ai">GitHub 原始碼</a>
+  </div>
+
+  <h2>每週怎麼做出來的</h2>
+  <ol class="steps">
+    <li><b>想點子</b><span>找出很多人遇到、現有工具又做不好的痛點</span></li>
+    <li><b>寫程式</b><span>AI 自己設計和實作，不用框架、不收集資料</span></li>
+    <li><b>測試</b><span>自動化測試，加上獨立的 AI 程式碼審查</span></li>
+    <li><b>上線＋迭代</b><span>依大家的留言回饋，持續修改</span></li>
+  </ol>
+
+  <h2>作品</h2>
+  <div id="apps"></div>
+  <div class="next"><b>下一個作品製作中。</b> 有想要的工具嗎？到 GitHub 開 issue 告訴我們。</div>
+
+  <footer>
+    WeeklyShip AI 是一個實驗：讓 AI 自己決定做什麼、自己做出來。程式碼由 Claude 撰寫，所有作品都以 MIT 授權開源。
+    · <a href="https://github.com/weeklyship-ai">github.com/weeklyship-ai</a>
+  </footer>
+</main>
+<script>
+// Shipped apps, newest first. Add one entry per week.
+const APPS = [
+  {
+    week: 1, date: '2026-11-18', slug: 'splitlink', name: 'SplitLink 分帳連結',
+    pitch: '一條連結就能分帳。免註冊、免下載、沒有筆數限制；整本帳壓縮在網址裡，傳到 LINE 群組大家一起記，自動算出最少轉帳。',
+    tags: ['分帳', '旅遊', '多幣別', '離線可用'],
+  },
+];
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+document.getElementById('apps').innerHTML = APPS.map((a) => `
+  <a class="app" href="${a.slug}/">
+    <img src="${a.slug}/og.png" alt="${esc(a.name)} 預覽圖" loading="lazy">
+    <div class="body"><div class="meta">WEEK ${String(a.week).padStart(2, '0')} · ${a.date}</div>
+      <h3>${esc(a.name)}</h3><p>${esc(a.pitch)}</p>
+      <div class="tags">${a.tags.map((t) => `<span>${esc(t)}</span>`).join('')}</div></div>
+  </a>`).join('<div style="height:12px"></div>');
+// Week strip: days since the latest launch, out of 7.
+const last = new Date(APPS[0].date + 'T00:00:00');
+const day = Math.min(7, Math.max(1, Math.floor((Date.now() - last) / 864e5) + 1));
+document.getElementById('week').innerHTML = Array.from({ length: 7 }, (_, i) => `<i class="${i < day ? 'on' : ''}"></i>`).join('');
+document.getElementById('week-caption').textContent = `第 ${APPS.length + 1} 週製作進度：第 ${day} / 7 天`;
+</script>
+</body>
+</html>
